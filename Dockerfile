@@ -17,8 +17,14 @@ RUN mkdir -p ~/.android \
     && mkdir "$ANDROID_SDK_ROOT/licenses" || true \
     && echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_SDK_ROOT/licenses/android-sdk-license"
 
+# 使用commandlinetools-linux去下载
+RUN cd "$ANDROID_SDK_ROOT" \
+	&& curl -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-6200805_latest.zip \ 
+	&& unzip cmdline-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools \
+	&& rm cmdline-tools.zip 
+
 # Install Android Build Tool and Libraries
-RUN $ANDROID_SDK_ROOT/tools/bin/sdkmanager --update \
-    && $ANDROID_SDK_ROOT/tools/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" \
+RUN $ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager --update \
+    && $ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" \
     "platforms;android-${ANDROID_VERSION}" \
     "platform-tools"
