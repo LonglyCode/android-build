@@ -1,4 +1,4 @@
-FROM gradle:7.3-jdk11
+FROM gradle:7.4-jdk11
 RUN apt-get update \
     && apt-get install build-essential file apt-utils -y
 ENV SDK_URL="https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip" \
@@ -13,9 +13,7 @@ RUN mkdir -p ~/.android \
     && cd "$ANDROID_SDK_ROOT" \
     && curl -o sdk.zip $SDK_URL \
     && unzip sdk.zip \
-    && rm sdk.zip \
-    && mkdir "$ANDROID_SDK_ROOT/licenses" || true \
-    && echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_SDK_ROOT/licenses/android-sdk-license"
+    && rm sdk.zip
 
 # 使用commandlinetools-linux去下载
 RUN cd "$ANDROID_SDK_ROOT" \
@@ -25,6 +23,7 @@ RUN cd "$ANDROID_SDK_ROOT" \
 
 # Install Android Build Tool and Libraries
 RUN $ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager --update \
+	&& yes | $ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager --licenses \
     && $ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" \
     "platforms;android-${ANDROID_VERSION}" \
     "platform-tools"
