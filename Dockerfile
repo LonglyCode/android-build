@@ -30,10 +30,47 @@ RUN $ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager --update \
     
 # refer to chinese repository
 RUN touch /home/gradle/.gradle/init.gradle &&                           \
-    echo "allprojects {                                                 \
-    repositories {                                                      \
-        maven { url 'https://maven.aliyun.com/repository/public/' }     \
-        mavenLocal()                                                    \
-        mavenCentral()                                                  \
-    }                                                                   \
-}" /home/gradle/.gradle/init.gradle
+    echo "allprojects{                                                     \
+    repositories {   \
+        def ALIYUN_REPOSITORY_URL = 'https://maven.aliyun.com/repository/central/'     \
+        def ALIYUN_JCENTER_URL = 'https://maven.aliyun.com/repository/public/'   \
+        all { ArtifactRepository repo ->   \
+            if(repo instanceof MavenArtifactRepository){   \
+                def url = repo.url.toString()   \
+                if (url.startsWith('https://repo.maven.org/maven2') || url.startsWith('https://repo1.maven.org/maven2') || url.startsWith('http://repo.maven.org/maven2') || url.startsWith('http://repo1.maven.org/maven2')) {   \
+                    remove repo   \
+                }   \
+                if (url.startsWith('https://jcenter.bintray.com/') || url.startsWith('http://jcenter.bintray.com/')) {   \
+                    remove repo   \
+                }   \
+            }   \
+        }   \
+        maven { url ALIYUN_REPOSITORY_URL }   \
+        maven { url ALIYUN_JCENTER_URL }   \
+        maven { url 'https://maven.aliyun.com/repository/google/' }   \
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin/' }   \
+        maven { url 'https://maven.aliyun.com/repository/jcenter/' }   \
+    }   \
+    buildscript{   \
+        repositories {   \
+            def ALIYUN_REPOSITORY_URL = 'https://maven.aliyun.com/repository/central/'   \
+            def ALIYUN_JCENTER_URL = 'https://maven.aliyun.com/repository/public/'   \
+            all { ArtifactRepository repo ->   \
+                if(repo instanceof MavenArtifactRepository){   \
+                    def url = repo.url.toString()   \
+                    if (url.startsWith('https://repo.maven.org/maven2') || url.startsWith('https://repo1.maven.org/maven2') || url.startsWith('http://repo.maven.org/maven2') || url.startsWith('http://repo1.maven.org/maven2')) {   \
+                        remove repo   \
+                    }   \
+                    if (url.startsWith('https://jcenter.bintray.com/') || url.startsWith('http://jcenter.bintray.com/')) {   \
+                        remove repo   \
+                    }   \
+                }   \
+            }   \
+            maven { url ALIYUN_REPOSITORY_URL }   \
+            maven { url ALIYUN_JCENTER_URL }   \
+            maven { url 'https://maven.aliyun.com/repository/google/' }   \
+            maven { url 'https://maven.aliyun.com/repository/gradle-plugin/' }   \
+            maven { url 'https://maven.aliyun.com/repository/jcenter/' }   \
+        }   \
+    }   \
+	}" /home/gradle/.gradle/init.gradle
