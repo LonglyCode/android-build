@@ -27,3 +27,13 @@ RUN $ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager --update \
     && $ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" \
     "platforms;android-${ANDROID_VERSION}" \
     "platform-tools"
+    
+# refer to chinese repository
+RUN touch /home/gradle/.gradle/init.gradle &&                           \
+    echo "allprojects {                                                 \
+    repositories {                                                      \
+        maven { url 'https://maven.aliyun.com/repository/public/' }     \
+        mavenLocal()                                                    \
+        mavenCentral()                                                  \
+    }                                                                   \
+}" /home/gradle/.gradle/init.gradle
